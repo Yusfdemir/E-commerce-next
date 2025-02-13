@@ -50,7 +50,7 @@ export const products = [
           createdDate: "2023-07-06T06:08:33.067Z",
           user: {
             id: "6475af156bad4917456e6e1e",
-            name: "Berkant Kaya",
+            name: "Yusuf Demir",
             email: "example@gmail.com",
             emailVerified: null,
             image:
