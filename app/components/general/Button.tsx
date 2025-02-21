@@ -11,7 +11,7 @@ interface ButtonProps {
 const Button:React.FC<ButtonProps> = ({text,onClick,small,outline,disabled,icon:Icon}) => {
   return (
     <button onClick={onClick}
-        className={`rounded-lg p-3
+        className={`flex items-center justify-center gap-2 my-1 rounded-lg p-3
             ${outline ? " border text-black" : "bg-black text-white"}
             ${small ? "w-[250px]" : "w-full"}
         `}
