@@ -21,7 +21,8 @@ const RegisterClient = () => {
         formState: { errors },
       } = useForm<FieldValues>()
       const onSubmit: SubmitHandler<FieldValues> = (data) => {
-       axios.post("/api/register",data).then(()=>{
+         console.log( data)
+       axios.post('/api/register',data).then(()=>{
         toast.success("Kullanıcı Oluşturuldu")
          signIn('credentials',{
            email:data.email,

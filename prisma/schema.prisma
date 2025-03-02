@@ -16,10 +16,7 @@ model User {
   hashedPassword String?
   role Role @default(USER)
   accounts      Account[]
-  
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
- 
+   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -49,18 +46,3 @@ model Account {
   @@unique([provider, providerAccountId])
 }
  
-// Optional for WebAuthn support
-model Authenticator {
-  credentialID         String  @id @map("_id")
-  userId               String  @db.ObjectId
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  @@unique([userId, credentialID])
-}
