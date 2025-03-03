@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import AuthContainer from '../containers/AuthContainer'
 import Heading from '../general/Heading'
 import Input from '../general/Input'
@@ -11,8 +11,13 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { User } from '@prisma/client'
+ 
+interface RegisterClientProps{
+  currentUser : User | null | undefined
+}
 
-const RegisterClient = () => {
+const RegisterClient:React.FC<RegisterClientProps> = ({currentUser}) => {
     const router = useRouter()
     const {
         register,
@@ -20,7 +25,8 @@ const RegisterClient = () => {
         watch,
         formState: { errors },
       } = useForm<FieldValues>()
-      const onSubmit: SubmitHandler<FieldValues> = (data) => {
+       
+    const onSubmit: SubmitHandler<FieldValues> = (data) => {
          console.log( data)
        axios.post('/api/register',data).then(()=>{
         toast.success("Kullanıcı Oluşturuldu")
@@ -40,6 +46,13 @@ const RegisterClient = () => {
          })
        })
     }
+     
+  useEffect(() => {
+        if(currentUser){
+          router.push("/cart")
+          router.refresh()
+        } 
+      }, [])
   return (
     <AuthContainer>
         <div className='w-full md:w-[500px] p-3 shadow-lg rounded-md'>
@@ -50,7 +63,7 @@ const RegisterClient = () => {
             <Button text='Kayıt Ol' onClick={handleSubmit(onSubmit)}/>
             <div className='text-center text-sm my-2 text-red-500'>Daha önce kayıt olduysan <Link className='underline' href={"/login"}>buraya tıkla</Link></div>
             <div className='text-center my-2 font-bold text-lg'>OR</div>
-            <Button text='Google ile Üye Ol' outline icon={FaGoogle} onClick={()=>{}}/>
+            <Button text='Google ile Üye Ol' outline icon={FaGoogle} onClick={()=>{signIn('google')}}/>
             
         </div>
     </AuthContainer>

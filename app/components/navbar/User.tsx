@@ -36,7 +36,7 @@ const User1:React.FC<UserProps> = ({currentUser}) => {
            {
              currentUser ? (
                <div className='space-y-1'>
-                  <div className='text-slate-600'> Admin</div>
+                  <div onClick={()=>router.push('/admin')} className='text-slate-600'> Admin</div>
                   <div onClick={()=>{menuFunc("logout")}} className='text-slate-600'> Logout</div>
                </div>
              ):(
