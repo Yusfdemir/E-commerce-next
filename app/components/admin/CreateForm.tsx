@@ -10,8 +10,13 @@ import {FaTabletAlt} from "react-icons/fa"
 import {CiMicrophoneOn} from "react-icons/ci"
 import ChoiceInput from "../general/ChoiceInput"
 import Button from "../general/Button"
+import { useState } from "react"
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import firebaseApp from "@/libs/firebase"
+import toast from "react-hot-toast"
 
 const CreateForm = () => {
+  const [img,setImg]=useState<File | null>(null)
   const categoryList = [
     {
       name:"Bilgisayar",
@@ -56,8 +61,56 @@ const CreateForm = () => {
                 inStock:false
             }
         })
-    const onSubmit: SubmitHandler<FieldValues> = (data) =>{
-        console.log(data)
+    const onSubmit: SubmitHandler<FieldValues> = async(data) =>{
+      console.log(data)
+      let uploadedImg;
+      const handleChange = async()=>{
+        toast.success('Yükleme işlemi basarılı !!!')
+        try {
+          const storage = getStorage(firebaseApp);
+          const storageRef = ref(storage, 'images/shop.jpg');
+           
+          const uploadTask = uploadBytesResumable(storageRef, img);
+
+            await new Promise<void>((resolve, reject) => {
+               uploadTask.on('state_changed',
+                  (snapshot) => {
+                     // Observe state change events such as progress, pause, and resume
+                     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                     console.log('Upload is ' + progress + '% done');
+                     switch (snapshot.state) {
+                        case 'paused':
+                           console.log('Upload is paused');
+                           break;
+                        case 'running':
+                           console.log('Upload is running');
+                           break;
+                     }
+                  },
+                  (error) => {
+                     reject(error)
+                  },
+                  () => {
+                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        uploadedImg =downloadURL;
+                        resolve()
+                     }).catch((error) => {
+                        console.log(error)
+                     });
+                  }
+               );
+            })
+
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      await handleChange()
+
+      let newData = {...data, image: uploadedImg} 
+       console.log( newData)
     }
     const category = watch("category")
     const setCustomValue = (id:string,value:any)=>{
@@ -66,6 +119,11 @@ const CreateForm = () => {
         shouldTouch:true,
         shouldValidate:true
       })
+    }
+    const onChangeFunc = (e:React.ChangeEvent<HTMLInputElement>)=>{
+      if(e.target.files && e.target.files.length>0){
+        setImg(e.target.files[0])
+      }
     }
   return (
     <div>
@@ -88,6 +146,7 @@ const CreateForm = () => {
              ))
           }
         </div>
+        <input className="mb-2" type="file" onChange={onChangeFunc}/>
         <Button text="Ürün Oluştur" onClick={handleSubmit(onSubmit)}/>
     </div>
   )
