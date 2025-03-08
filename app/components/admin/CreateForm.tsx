@@ -14,9 +14,13 @@ import { useState } from "react"
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import firebaseApp from "@/libs/firebase"
 import toast from "react-hot-toast"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 
 const CreateForm = () => {
   const [img,setImg]=useState<File | null>(null)
+  const router = useRouter();
+
   const categoryList = [
     {
       name:"Bilgisayar",
@@ -62,7 +66,6 @@ const CreateForm = () => {
             }
         })
     const onSubmit: SubmitHandler<FieldValues> = async(data) =>{
-      console.log(data)
       let uploadedImg;
       const handleChange = async()=>{
         toast.success('Yükleme işlemi basarılı !!!')
@@ -110,7 +113,15 @@ const CreateForm = () => {
       await handleChange()
 
       let newData = {...data, image: uploadedImg} 
-       console.log( newData)
+      
+      axios.post('/api/product', newData)
+      .then(() => {
+         toast.success('Ürün ekleme işlemi basarılı !!!')
+         router.refresh();
+
+      }).catch((error) => {
+        console.log(error, "error")
+      })
     }
     const category = watch("category")
     const setCustomValue = (id:string,value:any)=>{

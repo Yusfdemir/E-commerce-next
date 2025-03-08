@@ -18,13 +18,18 @@ const AdminSidebar = () => {
             icon:MdOutlineCreate
         },
         {
+            name: "Ürünleri Yönet",
+            icon: MdOutlineCreate,
+            url: "/admin/manage"
+        },
+        {
             name:"Siparişlerim",
             url:"/admin/order",
             icon:MdBorderOuter
         }
     ]
   return (
-    <div className='w-1/6 border-r h-screen p-4 bg-orange-600'>
+    <div className='w-1/5 border-r h-screen p-4 bg-orange-600'>
         <div className='space-y-4'> 
             {adminPanel.map((admin,i)=>(
                     <AdminSidebarItem key={i} selected={pathname == admin.url} name={admin.name} icon={admin.icon} url={admin.url}/>
